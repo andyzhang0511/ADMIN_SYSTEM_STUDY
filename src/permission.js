@@ -6,6 +6,14 @@ import 'nprogress/nprogress.css' // 进度条样式
 import { getToken } from '@/utils/auth' // 从cookie中获取token
 import getPageTitle from '@/utils/get-page-title'
 
+// 权限验证
+// 通过获取当前用户的权限去比对路由表，生成当前用户具的权限可访问的路由表，通过 router.addRoutes 动态挂载到 router 上
+/**
+ * 原理
+ * 1.在后台通过一个 tree 控件或者其它展现形式给每一个页面动态配置权限，之后将这份路由表存储到后端
+ * 2.当用户登录后得到 roles，前端根据roles 去向后端请求可访问的路由表，从而动态生成可访问页面
+ * 3.之后就是 router.addRoutes 动态挂载到 router 上
+*/
 NProgress.configure({ showSpinner: false }) // NProgress配置 是否显示环形进度动画，默认true。
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist 不是我

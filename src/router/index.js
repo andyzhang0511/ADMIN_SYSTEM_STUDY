@@ -16,20 +16,27 @@ import nestedRouter from './modules/nested'
  * 注意：子菜单仅在route children.length>=1时出现
  * 详细信息请参见：https://panjiachen.github.io/vue-element-admin-site/guide/essenties/router-and-nav.html
  *
- * hidden: true                   如果设置为true，则项目将不会显示在侧边栏中（默认为false）
+ * hidden: true                   当设置 true 的时候该路由不会在侧边栏出现 如401，login等页面，或者如一些编辑页面/edit/1
  * alwaysShow: true               如果设置为true，将始终显示根菜单
  *                                如果未始终设置Show，则当项具有多个子路由时,它将成为嵌套模式，否则不显示根菜单
- * redirect: noRedirect           如果设置为no redirect，则breadcrumb中不会重定向
+ * redirect: noRedirect           当设置 noRedirect 的时候该路由在面包屑导航中不可被点击
  * name:'router-name'             该名称由<keep alive>使用(必须设置！！！）
  * meta : {
-    roles: ['admin','editor']     控制页面角色（可以设置多个角色）
-    title: 'title'                侧边栏和面包屑中显示的名称（推荐集）
-    icon: 'svg-name'              图标显示在侧栏中
-    noCache: true                 如果设置为true，则不会缓存该页（默认为false）
-    affix: true                   如果设置为true，则标记将粘贴在“标记”视图中 ???
-    breadcrumb: false             如果设置为false，则该项将隐藏在breadcrumb中（默认为true）
+    roles: ['admin','editor']     设置该路由进入的权限，支持多个权限叠加
+    title: 'title'                设置该路由在侧边栏和面包屑中展示的名字
+    icon: 'svg-name'              设置该路由的图标
+    noCache: true                 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+    affix: true                   当在声明路由是 添加了 Affix 属性，则当前tag会被固定在 tags-view中（不可被删除）。
+    breadcrumb: false             如果设置为false，则不会在breadcrumb面包屑中显示
     activeMenu: '/example/list'   如果设置路径，侧边栏将突出显示您设置的路径
   }
+ */
+
+/**
+ * 这里的路由分为两种，constantRoutes 和 asyncRoutes
+ * constantRoutes： 代表那些不需要动态判断权限的路由，如登录页、404、等通用页面
+ * 代表那些需求动态判断权限并通过 addRoutes 动态添加的页面
+ * 这里所有的路由页面都使用 路由懒加载 了  例于:const Foo = () => import('./Foo.vue')
  */
 
 /**
@@ -69,22 +76,23 @@ export const constantRoutes = [
     component: () => import('@/views/error-page/401'),
     hidden: true
   },
+  // 这里开始对应的路由都会显示在app-main中
   {
     path: '/',
-    component: Layout,
+    component: Layout, // 你可以选择不同的layout组件
     redirect: '/dashboard',
     children: [
       {
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
+        name: 'Dashboard', // 仪表板
         meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
       }
     ]
   },
   {
     path: '/documentation',
-    component: Layout,
+    component: Layout, // 你可以选择不同的layout组件
     children: [
       {
         path: 'index',
@@ -103,7 +111,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/guide/index'),
         name: 'Guide',
-        meta: { title: 'Guide', icon: 'guide', noCache: true }
+        meta: { title: 'Guide', icon: 'guide', noCache: true, affix: true }
       }
     ]
   },
@@ -120,6 +128,19 @@ export const constantRoutes = [
         meta: { title: 'Profile', icon: 'user', noCache: true }
       }
     ]
+  },
+  {
+    path: '/adminSystem',
+    component: Layout,
+    redirect: '/adminSystem/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/adminSystem/index'),
+        name: 'adminSystem',
+        meta: { title: '增删改查', icon: 'edit', noCache: true }
+      }
+    ]
   }
 ]
 
@@ -131,8 +152,8 @@ export const asyncRoutes = [
   {
     path: '/permission',
     component: Layout,
-    redirect: '/permission/page',
-    alwaysShow: true, // 将始终显示根菜单
+    redirect: '/permission/page', // 重定向地址，在面包屑中点击会重定向去的地址
+    alwaysShow: true, // 一直显示根路由
     name: 'Permission',
     meta: {
       title: 'Permission',
@@ -366,7 +387,7 @@ export const asyncRoutes = [
       {
         path: 'index',
         component: () => import('@/views/clipboard/index'),
-        name: 'ClipboardDemo',
+        name: 'ClipboardDemo', // clipboard
         meta: { title: 'Clipboard', icon: 'clipboard' }
       }
     ]

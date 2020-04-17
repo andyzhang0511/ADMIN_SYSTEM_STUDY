@@ -1,6 +1,8 @@
 <template>
+  <!-- 递归组件 -->
   <div :class="{'has-logo':showLogo}">
     <logo v-if="showLogo" :collapse="isCollapse" />
+    <!-- el-scrollbar 来处理侧边栏滚动问题 -->
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         :default-active="activeMenu"
